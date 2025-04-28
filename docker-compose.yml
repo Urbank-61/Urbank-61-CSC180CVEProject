@@ -1,32 +1,23 @@
 version: '3'
-
 services:
-  mysql:
-    image: mysql:5.7
+  vulnerable_mysql:
+    image: mysql:8.0
     container_name: vulnerable_mysql
+    ports:
+      - "3307:3306"  # Change the host port to 3307
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-    ports:
-      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 
-  vulnerable-container:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  vulnerable_container:
+    build: .
     container_name: vulnerable_container
-    depends_on:
-      - mysql
     ports:
-      - "8080:8080"
+      - "8080:80"   # Modify this port mapping as needed
+    depends_on:
+      - vulnerable_mysql
 
 volumes:
   mysql_data:
-    driver: local
-
-
-
-
-
 
