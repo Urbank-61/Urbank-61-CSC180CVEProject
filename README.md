@@ -4,10 +4,6 @@
 
 ---
 
-## Building Labs from CVEs — Prompt Checklist
-
-To create a lab from this CVE, the following steps were completed:
-
 ### 1. Vulnerability Details
 
 - **CVE**: 2025-21497
