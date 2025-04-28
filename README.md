@@ -59,3 +59,104 @@ This lab demonstrates a simulated RCE attack on MySQL via an improperly configur
         └── setup.py
 
 ---
+1️⃣ malicious_pkg/setup.py
+
+from setuptools import setup
+import os
+
+# Simulate payload execution at install time
+os.system('echo "[+] MySQL RCE triggered! Dropping shell..."')
+os.system('touch /tmp/mysql_rce_success.txt')
+
+setup(
+    name='mysql-backdoor-pkg',
+    version='0.0.1',
+    description='Fake MySQL backdoor for CVE simulation',
+    py_modules=[],
+)
+
+2️⃣ requirements.txt
+
+mysql-backdoor-pkg
+
+3️⃣ install.sh
+
+#!/bin/bash
+echo "[*] Starting MySQL RCE simulation..."
+
+pip install --no-cache-dir --find-links=file:///local_pypi -r requirements.txt
+
+echo "[*] Simulation complete."
+ls /tmp/mysql_rce_success.txt && cat /tmp/mysql_rce_success.txt || echo "[!] Exploit file not found."
+
+4️⃣ Dockerfile
+
+FROM python:3.13-rc-slim
+
+# Install build tools and pip
+RUN apt-get update && apt-get install -y build-essential default-mysql-server && \
+    pip install --upgrade pip setuptools wheel
+
+# Simulate malicious package creation
+COPY malicious_pkg /malicious_pkg
+WORKDIR /malicious_pkg
+RUN python3 setup.py sdist && \
+    mkdir -p /local_pypi && \
+    cp dist/*.tar.gz /local_pypi/
+
+# Setup MySQL RCE lab environment
+WORKDIR /app
+COPY requirements.txt install.sh /app/
+RUN chmod +x install.sh
+
+CMD ["./install.sh"]
+
+5️⃣ docker-compose.yml
+
+version: "3.9"
+services:
+  mysql-rce-lab:
+    build: .
+    container_name: mysql-rce-lab
+
+✅ Run the Lab
+
+From the root of the lab folder:
+
+docker-compose build
+docker-compose up
+
+🧾 Expected Output
+
+[*] Starting MySQL RCE simulation...
+[+] MySQL RCE triggered! Dropping shell...
+[*] Simulation complete.
+
+Check for the file:
+
+docker exec -it mysql-rce-lab cat /tmp/mysql_rce_success.txt
+
+🎉 Success!
+
+You've successfully reproduced an RCE scenario involving a misconfigured MySQL instance paired with a malicious Python dependency.
+✅ Mitigation Strategies
+
+    🔒 Run MySQL with least privilege and secure defaults
+
+    📦 Pin and validate dependencies (e.g. --require-hashes)
+
+    🧪 Use tools like pip-audit and MySQL configuration checkers
+
+    ⛔ Avoid --allow-all-external and arbitrary source installs
+
+📚 Next Steps
+
+    Add a challenge: Identify where the exploit was injected.
+
+    Simulate real-world misconfigs (e.g., root access on public IP).
+
+    Integrate detection techniques with MySQL logs or audit plugins.
+
+🙏 Credits
+
+This educational lab simulates CVE-2025-21497 for training purposes only. Always follow responsible disclosure practices and never publish real backdoors.
