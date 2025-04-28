@@ -54,10 +54,7 @@ This lab demonstrates a simulated RCE attack on MySQL via an improperly configur
     └── malicious_pkg/
         └── setup.py
 
----
-🚨 CVE-2025-21497: MySQL RCE via Privilege Misconfiguration
 
-Simulated lab demonstrating Remote Code Execution through an insecure MySQL configuration.
 1️⃣ malicious_pkg/setup.py
 
 from setuptools import setup
@@ -135,27 +132,4 @@ Check for the file:
 
 docker exec -it mysql-rce-lab cat /tmp/mysql_rce_success.txt
 
-🎉 Success!
 
-You've successfully reproduced an RCE scenario involving a misconfigured MySQL instance paired with a malicious Python dependency.
-✅ Mitigation Strategies
-
-    🔒 Run MySQL with least privilege and secure defaults
-
-    📦 Pin and validate dependencies (e.g. --require-hashes)
-
-    🧪 Use tools like pip-audit and MySQL configuration checkers
-
-    ⛔ Avoid --allow-all-external and arbitrary source installs
-
-📚 Next Steps
-
-    Add a challenge: Identify where the exploit was injected.
-
-    Simulate real-world misconfigs (e.g., root access on public IP).
-
-    Integrate detection techniques with MySQL logs or audit plugins.
-
-🙏 Credits
-
-This educational lab simulates CVE-2025-21497 for training purposes only. Always follow responsible disclosure practices and never publish real backdoors.
