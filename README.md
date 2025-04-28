@@ -55,6 +55,9 @@ This lab demonstrates a simulated RCE attack on MySQL via an improperly configur
         └── setup.py
 
 ---
+🚨 CVE-2025-21497: MySQL RCE via Privilege Misconfiguration
+
+Simulated lab demonstrating Remote Code Execution through an insecure MySQL configuration.
 1️⃣ malicious_pkg/setup.py
 
 from setuptools import setup
