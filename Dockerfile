@@ -31,3 +31,4 @@ EXPOSE 3306
 
 # Start MySQL service and any other necessary services or commands
 CMD service mysql start && tail -f /dev/null
+
